@@ -4,8 +4,8 @@ import (
 	"my-realworld-go/common" // 本地的common包
 )
 
-// 用户模型
-type UserModel struct {
+// 用户
+type User struct {
 	ID       uint   `gorm:"primary_key"`
 	Username string `json:"username" gorm:"column:username"`
 	Email    string `json:"email" gorm:"column:email;unique_index"`
@@ -39,15 +39,24 @@ var LoginUserDTO struct {
 	} `json:"user"`
 }
 
+// 注册用户DTO
+var RegistUserDTO struct {
+	User struct {
+		Email    string `json:"email" binding:"required,email"`
+		Password string `json:"password" binding:"required"`
+		Username string `json:"username" binding:"required"`
+	} `json:"user"`
+}
+
 // 数据表表名
-func (UserModel) TableName() string {
+func (User) TableName() string {
 	return "user"
 }
 
 // 查找用户
-func SelectUser(condition interface{}) (UserModel, error) {
+func SelectUser(condition interface{}) (User, error) {
 	db := common.GetDB()
-	var model UserModel
+	var model User
 	err := db.Where(condition).First(&model).Error
 	return model, err
 }
@@ -55,6 +64,6 @@ func SelectUser(condition interface{}) (UserModel, error) {
 // 保存用户
 func SaveUser(data interface{}) error {
 	db := common.GetDB()
-	err := db.Save(data).Error
+	err := db.Table("user").Create(data).Error
 	return err
 }
