@@ -1,8 +1,8 @@
 package main
 
 import (
-	"my-realworld-go/common" // common包
-	"my-realworld-go/routes" // routes包
+	"my-realworld-go/common"
+	"my-realworld-go/user" // user包
 
 	"github.com/gin-gonic/gin"         // Gin框架
 	_ "github.com/go-sql-driver/mysql" // 加载MySQL驱动
@@ -20,10 +20,10 @@ func main() {
 	apiGroup := router.Group("/api")
 
 	// profiles 分组
-	routes.Profiles(apiGroup.Group("/profiles"))
+	user.Profiles(apiGroup.Group("/profiles"))
 
 	// users 分组
-	routes.Users(apiGroup.Group("/users"))
+	user.Users(apiGroup.Group("/users"))
 
 	router.Run(":8080")
 }

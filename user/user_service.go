@@ -1,9 +1,8 @@
-package service
+package user
 
 import (
 	"errors"
 	"my-realworld-go/common"
-	"my-realworld-go/models"
 
 	"net/http"
 
@@ -14,13 +13,13 @@ import (
 func GetProfile(c *gin.Context) {
 	username := c.Param("username")
 	// 查询 User
-	userModel, err := models.SelectUser(&models.UserModel{Username: username})
+	userModel, err := SelectUser(&UserModel{Username: username})
 	if err != nil {
 		c.JSON(http.StatusNotFound, common.NewError("profile", errors.New("请检查")))
 		return
 	}
 	// 转换为 Profile 对象
-	profile := models.Profile{
+	profile := Profile{
 		Username: userModel.Username,
 		Bio:      userModel.Bio,
 		Image:    userModel.Image,
@@ -56,14 +55,14 @@ func UsersLogin(c *gin.Context) {
 	user := LoginUser.User
 
 	// 根据邮箱和密码查询，判断用户是否存在
-	userModel, err := models.SelectUser(&models.UserModel{Email: user.Email, Password: user.Password})
+	userModel, err := SelectUser(&UserModel{Email: user.Email, Password: user.Password})
 	if err != nil {
 		c.JSON(http.StatusForbidden, common.NewError("login", errors.New("邮箱或密码错误，请检查")))
 		return
 	}
 
 	//
-	userVo := models.UserVo{
+	userVo := UserVo{
 		Username: userModel.Username,
 		Email:    userModel.Email,
 		Bio:      userModel.Bio,

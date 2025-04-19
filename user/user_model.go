@@ -1,9 +1,7 @@
-package models
+package user
 
 import (
 	"my-realworld-go/common" // 本地的common包
-
-	"github.com/jinzhu/gorm"
 )
 
 // 用户模型
@@ -44,14 +42,6 @@ type LoginUserDto struct {
 // 数据表表名
 func (UserModel) TableName() string {
 	return "user"
-}
-
-type FollowModel struct {
-	gorm.Model
-	Following    UserModel
-	FollowingID  uint
-	FollowedBy   UserModel
-	FollowedByID uint
 }
 
 // 查找用户
