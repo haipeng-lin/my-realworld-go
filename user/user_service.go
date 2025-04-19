@@ -13,7 +13,7 @@ import (
 func GetProfile(c *gin.Context) {
 	username := c.Param("username")
 	// 查询 User
-	userModel, err := SelectUser(&User{Username: username})
+	userModel, err := SelectUser(&UserModel{Username: username})
 	if err != nil {
 		c.JSON(http.StatusNotFound, common.NewError("profile", errors.New("请检查")))
 		return
@@ -41,7 +41,7 @@ func UsersLogin(c *gin.Context) {
 	// 访问 User 字段
 	user := LoginUserDTO.User
 	// 根据邮箱和密码查询，判断用户是否存在
-	userModel, err := SelectUser(&User{Email: user.Email, Password: user.Password})
+	userModel, err := SelectUser(&UserModel{Email: user.Email, Password: user.Password})
 	if err != nil {
 		c.JSON(http.StatusForbidden, common.NewError("用户登录", errors.New("邮箱或密码错误，请检查！")))
 		return

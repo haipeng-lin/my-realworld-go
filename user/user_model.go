@@ -5,7 +5,7 @@ import (
 )
 
 // 用户
-type User struct {
+type UserModel struct {
 	ID       uint   `gorm:"primary_key"`
 	Username string `json:"username" gorm:"column:username"`
 	Email    string `json:"email" gorm:"column:email;unique_index"`
@@ -49,14 +49,14 @@ var RegistUserDTO struct {
 }
 
 // 数据表表名
-func (User) TableName() string {
+func (UserModel) TableName() string {
 	return "user"
 }
 
 // 查找用户
-func SelectUser(condition interface{}) (User, error) {
+func SelectUser(condition interface{}) (UserModel, error) {
 	db := common.GetDB()
-	var model User
+	var model UserModel
 	err := db.Where(condition).First(&model).Error
 	return model, err
 }
