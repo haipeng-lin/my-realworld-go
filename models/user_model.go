@@ -6,21 +6,39 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+// 用户模型
 type UserModel struct {
-	ID           uint    `gorm:"primary_key"`
-	Username     string  `json:"username" gorm:"column:username"`
-	Email        string  `json:"email" gorm:"column:email;unique_index"`
-	Bio          string  `json:"bio" gorm:"column:bio;size:1024"`
-	Image        *string `json:"image" gorm:"column:image"`
-	PasswordHash string  `gorm:"column:password;not null"`
+	ID       uint   `gorm:"primary_key"`
+	Username string `json:"username" gorm:"column:username"`
+	Email    string `json:"email" gorm:"column:email;unique_index"`
+	Bio      string `json:"bio" gorm:"column:bio;size:1024"`
+	Image    string `json:"image" gorm:"column:image"`
+	Password string `gorm:"column:password;not null"`
 }
 
-// 信息
+// 个人资料
 type Profile struct {
-	Username  string  `json:"username"`
-	Bio       string  `json:"bio"`
-	Image     *string `json:"image"`
-	Following bool    `json:"following"`
+	Username  string `json:"username"`
+	Bio       string `json:"bio"`
+	Image     string `json:"image"`
+	Following bool   `json:"following"`
+}
+
+// 用户Vo
+type UserVo struct {
+	Email    string `json:"email"`
+	Username string `json:"username"`
+	Bio      string `json:"bio"`
+	Image    string `json:"image"`
+	Token    string `json:"token"`
+}
+
+// 登录用户
+type LoginUserDto struct {
+	User struct {
+		Email    string `json:"email" binding:"required,email"`
+		Password string `json:"password" binding:"required"`
+	} `json:"user"`
 }
 
 // 数据表表名
