@@ -22,8 +22,8 @@ type Profile struct {
 	Following bool   `json:"following"`
 }
 
-// 用户Vo
-type UserVo struct {
+// 用户VO
+type UserVO struct {
 	Email    string `json:"email"`
 	Username string `json:"username"`
 	Bio      string `json:"bio"`
@@ -31,8 +31,8 @@ type UserVo struct {
 	Token    string `json:"token"`
 }
 
-// 登录用户
-type LoginUserDto struct {
+// 登录用户DTO
+var LoginUserDTO struct {
 	User struct {
 		Email    string `json:"email" binding:"required,email"`
 		Password string `json:"password" binding:"required"`

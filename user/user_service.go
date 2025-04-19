@@ -37,32 +37,25 @@ func UsersRegist(c *gin.Context) {
 
 // 用户登录、认证
 func UsersLogin(c *gin.Context) {
-	// 登录请求结构体
-	var LoginUser struct {
-		User struct {
-			Email    string `json:"email" binding:"required,email"`
-			Password string `json:"password" binding:"required"`
-		} `json:"user"`
-	}
 
 	// 绑定请求数据
-	if err := c.ShouldBindJSON(&LoginUser); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "请确认数据填写规范"})
+	if err := c.ShouldBindJSON(&LoginUserDTO); err != nil {
+		c.JSON(http.StatusBadRequest, common.NewError("登录", errors.New("请确认数据填写是否规范！")))
 		return
 	}
 
-	// 获取user
-	user := LoginUser.User
+	// 访问 User 字段
+	user := LoginUserDTO.User
 
 	// 根据邮箱和密码查询，判断用户是否存在
 	userModel, err := SelectUser(&UserModel{Email: user.Email, Password: user.Password})
 	if err != nil {
-		c.JSON(http.StatusForbidden, common.NewError("login", errors.New("邮箱或密码错误，请检查")))
+		c.JSON(http.StatusForbidden, common.NewError("登录", errors.New("邮箱或密码错误，请检查！")))
 		return
 	}
 
-	//
-	userVo := UserVo{
+	// 转换为VO
+	userVO := UserVO{
 		Username: userModel.Username,
 		Email:    userModel.Email,
 		Bio:      userModel.Bio,
@@ -70,7 +63,7 @@ func UsersLogin(c *gin.Context) {
 		Token:    common.GenToken(userModel.ID),
 	}
 
-	c.JSON(http.StatusOK, gin.H{"user": userVo})
+	c.JSON(http.StatusOK, gin.H{"user": userVO})
 }
 
 // 关注用户
