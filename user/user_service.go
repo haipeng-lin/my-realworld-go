@@ -11,20 +11,22 @@ import (
 
 // 获取个人资料
 func GetProfile(c *gin.Context) {
+	// 解析 username
 	username := c.Param("username")
 	// 查询 User
 	userModel, err := SelectUser(&UserModel{Username: username})
 	if err != nil {
-		c.JSON(http.StatusNotFound, common.NewError("profile", errors.New("请检查")))
+		c.JSON(http.StatusNotFound, common.NewError("database", err))
 		return
 	}
+	// 查询当前用户
+	currentUserModel := c.MustGet("current_user_model").(UserModel)
 	// 转换为 ProfileVO
 	profileVO := ProfileVO{
-		Username: userModel.Username,
-		Bio:      userModel.Bio,
-		Image:    userModel.Image,
-		// TODO：先默认为false，待改
-		Following: false,
+		Username:  userModel.Username,
+		Bio:       userModel.Bio,
+		Image:     userModel.Image,
+		Following: currentUserModel.isFollowing(userModel),
 	}
 
 	c.JSON(http.StatusOK, gin.H{"profile": profileVO})
