@@ -14,6 +14,12 @@ type UserModel struct {
 	Password string `gorm:"column:password;not null"`
 }
 
+// 用户关注
+type FollowModel struct {
+	UserID         uint `gorm:"column:A"` // 用户ID
+	FollowedUserID uint `gorm:"column:B"` // 被关注用户ID
+}
+
 // 个人资料
 type ProfileVO struct {
 	Username  string `json:"username"`
@@ -88,5 +94,19 @@ func SaveUser(data interface{}) error {
 func UpdateUser(data interface{}) error {
 	db := common.GetDB()
 	err := db.Table("user").Updates(data).Error
+	return err
+}
+
+/**
+*	用户关注：用户 currentUserModel 关注了 followedUserModel
+ */
+func (currentUserModel UserModel) following(followedUserModel UserModel) error {
+	db := common.GetDB()
+	var follow FollowModel
+	//
+	err := db.Table("_userfollows").FirstOrCreate(&follow, &FollowModel{
+		FollowedUserID: followedUserModel.ID,
+		UserID:         currentUserModel.ID, // 当前用户
+	}).Error
 	return err
 }
