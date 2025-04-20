@@ -168,4 +168,27 @@ func FollowUser(c *gin.Context) {
 
 // 取消关注用户
 func UnFollowUser(c *gin.Context) {
+	// 解析请求参数 username
+	username := c.Param("username")
+	followedUserModel, err := SelectUser(&UserModel{Username: username})
+	if err != nil {
+		c.JSON(http.StatusNotFound, common.NewError("profile", errors.New("无效用户名！")))
+		return
+	}
+	// 查询当前用户
+	currentUserModel := c.MustGet("current_user_model").(UserModel)
+	// 当前用户 取消关注
+	err = currentUserModel.unFollowing(followedUserModel)
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, common.NewError("database", err))
+		return
+	}
+	// 返回被取消关注者个人资料
+	profileVO := ProfileVO{
+		Username:  followedUserModel.Username,
+		Bio:       followedUserModel.Bio,
+		Image:     followedUserModel.Image,
+		Following: false,
+	}
+	c.JSON(http.StatusOK, gin.H{"profile": profileVO})
 }

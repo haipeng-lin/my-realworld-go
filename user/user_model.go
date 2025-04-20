@@ -97,16 +97,24 @@ func UpdateUser(data interface{}) error {
 	return err
 }
 
-/**
-*	用户关注：用户 currentUserModel 关注了 followedUserModel
- */
+// 用户关注：用户 currentUserModel 关注了 followedUserModel
 func (currentUserModel UserModel) following(followedUserModel UserModel) error {
 	db := common.GetDB()
 	var follow FollowModel
 	//
 	err := db.Table("_userfollows").FirstOrCreate(&follow, &FollowModel{
-		FollowedUserID: followedUserModel.ID,
 		UserID:         currentUserModel.ID, // 当前用户
+		FollowedUserID: followedUserModel.ID,
 	}).Error
+	return err
+}
+
+// 用户取消关注：用户 currentUserModel 取消关注 followedUserModel
+func (currentUserModel UserModel) unFollowing(followedUserModel UserModel) error {
+	db := common.GetDB()
+	err := db.Table("_userfollows").Where(FollowModel{
+		UserID:         currentUserModel.ID, // 当前用户
+		FollowedUserID: followedUserModel.ID,
+	}).Delete(FollowModel{}).Error
 	return err
 }
