@@ -150,6 +150,11 @@ func FollowUser(c *gin.Context) {
 	}
 	// 查询当前用户
 	currentUserModel := c.MustGet("current_user_model").(UserModel)
+	// 用户不能关注自己！
+	if currentUserModel.ID == followedUserModel.ID {
+		c.JSON(http.StatusNotFound, common.NewError("profile", errors.New("用户不能关注自己！")))
+		return
+	}
 	// 当前用户关注！
 	err = currentUserModel.following(followedUserModel)
 	if err != nil {
@@ -177,6 +182,11 @@ func UnFollowUser(c *gin.Context) {
 	}
 	// 查询当前用户
 	currentUserModel := c.MustGet("current_user_model").(UserModel)
+	// 用户不能关注自己！
+	if currentUserModel.ID == followedUserModel.ID {
+		c.JSON(http.StatusNotFound, common.NewError("profile", errors.New("用户不能取消关注自己！")))
+		return
+	}
 	// 当前用户 取消关注
 	err = currentUserModel.unFollowing(followedUserModel)
 	if err != nil {
