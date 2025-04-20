@@ -118,3 +118,14 @@ func (currentUserModel UserModel) unFollowing(followedUserModel UserModel) error
 	}).Delete(FollowModel{}).Error
 	return err
 }
+
+// 判断用户是否被当前用户关注
+func (currentUserModel UserModel) isFollowing(followedUserModel UserModel) bool {
+	db := common.GetDB()
+	var follow FollowModel
+	db.Table("_userfollows").Where(FollowModel{
+		UserID:         currentUserModel.ID, // 当前用户
+		FollowedUserID: followedUserModel.ID,
+	}).First(&follow)
+	return follow.UserID != 0
+}
