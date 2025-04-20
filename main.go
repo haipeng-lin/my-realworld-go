@@ -19,11 +19,15 @@ func main() {
 	// api 分组
 	apiGroup := router.Group("/api")
 
-	// profiles 分组
-	user.Profiles(apiGroup.Group("/profiles"))
+	// Users 分组：登录注册（不用身份验证）
+	user.UsersRoute(apiGroup.Group("/users"))
 
-	// users 分组
-	user.Users(apiGroup.Group("/users"))
+	// jwt——身份验证
+	apiGroup.Use(user.AuthMiddleware())
+
+	// profiles 、user 分组（用身份验证）
+	user.ProfilesRoute(apiGroup.Group("/profiles"))
+	user.UserRoute(apiGroup.Group("/user"))
 
 	router.Run(":8080")
 }

@@ -30,7 +30,7 @@ func GetProfile(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"profile": profile})
 }
 
-// 用户登录、认证
+// 用户登录
 func UsersLogin(c *gin.Context) {
 
 	// 绑定请求数据
@@ -46,6 +46,8 @@ func UsersLogin(c *gin.Context) {
 		c.JSON(http.StatusForbidden, common.NewError("用户登录", errors.New("邮箱或密码错误，请检查！")))
 		return
 	}
+	// 修改用户上下文
+	UpdateUserModelContext(c, userModel.ID)
 	// 转换为VO
 	userVO := UserVO{
 		Username: userModel.Username,
@@ -82,6 +84,15 @@ func UsersRegist(c *gin.Context) {
 		Token:    "",
 	}
 	c.JSON(http.StatusCreated, gin.H{"user": userVO})
+}
+
+// 获取用户
+func GetUser(c *gin.Context) {
+}
+
+// 用户修改
+func UserUpdate(c *gin.Context) {
+
 }
 
 // 关注用户
