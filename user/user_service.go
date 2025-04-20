@@ -19,7 +19,7 @@ func GetProfile(c *gin.Context) {
 		return
 	}
 	// 转换为 Profile 对象
-	profile := Profile{
+	profileVO := ProfileVO{
 		Username: userModel.Username,
 		Bio:      userModel.Bio,
 		Image:    userModel.Image,
@@ -27,7 +27,7 @@ func GetProfile(c *gin.Context) {
 		Following: false,
 	}
 
-	c.JSON(http.StatusOK, gin.H{"profile": profile})
+	c.JSON(http.StatusOK, gin.H{"profile": profileVO})
 }
 
 // 用户登录

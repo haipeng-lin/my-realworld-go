@@ -15,7 +15,7 @@ type UserModel struct {
 }
 
 // 个人资料
-type Profile struct {
+type ProfileVO struct {
 	Username  string `json:"username"`
 	Bio       string `json:"bio"`
 	Image     string `json:"image"`
