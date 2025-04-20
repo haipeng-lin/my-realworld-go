@@ -48,6 +48,18 @@ var RegistUserDTO struct {
 	} `json:"user"`
 }
 
+// 修改用户DTO
+var UpdateUserDTO struct {
+	User struct {
+		ID       uint
+		Email    string `json:"email" binding:"email"`
+		Username string `json:"username" bingding:""`
+		Password string `json:"password" bingding:""`
+		Image    string `json:"image" binding:""`
+		Bio      string `json:"bio" binding:""`
+	} `json:"user"`
+}
+
 // 数据表表名
 func (UserModel) TableName() string {
 	return "user"
@@ -65,5 +77,16 @@ func SelectUser(condition interface{}) (UserModel, error) {
 func SaveUser(data interface{}) error {
 	db := common.GetDB()
 	err := db.Table("user").Create(data).Error
+	return err
+}
+
+/**
+ * 修改用户
+ * 	Updates(data)：更新多个字段；Update(字段名，data)：更新指定字段
+ *
+ */
+func UpdateUser(data interface{}) error {
+	db := common.GetDB()
+	err := db.Table("user").Updates(data).Error
 	return err
 }

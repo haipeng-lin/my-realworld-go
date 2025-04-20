@@ -68,8 +68,8 @@ func UsersRegist(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, common.NewError("用户注册", errors.New("请确认数据填写是否规范！")))
 		return
 	}
-	// 取到 User
-	var user = RegistUserDTO.User
+	// 获取 User
+	user := RegistUserDTO.User
 	// 保存用户
 	if err := SaveUser(&user); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, err)
@@ -88,9 +88,9 @@ func UsersRegist(c *gin.Context) {
 
 // 获取用户
 func GetUser(c *gin.Context) {
-	// 从上下文获取
+	// 从上下文获取用户
 	currentUserModel := c.MustGet("current_user_model").(UserModel)
-	// 用户VO
+	// 返回用户VO
 	userVO := UserVO{
 		Username: currentUserModel.Username,
 		Email:    currentUserModel.Email,
@@ -104,6 +104,39 @@ func GetUser(c *gin.Context) {
 // 用户修改
 func UserUpdate(c *gin.Context) {
 
+	// 校验数据
+	if err := c.ShouldBindJSON(&UpdateUserDTO); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, common.NewError("用户修改", errors.New("请确认数据填写是否规范！")))
+		return
+	}
+	// 获取 user
+	user := UpdateUserDTO.User
+	// 从用户上下文获取用户ID
+	currentUserModel := c.MustGet("current_user_model").(UserModel)
+	user.ID = currentUserModel.ID
+	// 修改用户
+	if err := UpdateUser(&user); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, common.NewError("数据库修改失败", err))
+		return
+	}
+	// 修改用户上下文
+	UpdateUserModelContext(c, currentUserModel.ID)
+
+	// 根据用户ID查询完整信息
+	fullUser, err := SelectUser(&UserModel{ID: user.ID})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, common.NewError("获取用户信息失败", err))
+		return
+	}
+	// 返回用户VO
+	userVO := UserVO{
+		Username: fullUser.Username,
+		Email:    fullUser.Email,
+		Bio:      fullUser.Bio,
+		Image:    fullUser.Image,
+		Token:    common.GenToken(user.ID),
+	}
+	c.JSON(http.StatusOK, gin.H{"user": userVO})
 }
 
 // 关注用户
