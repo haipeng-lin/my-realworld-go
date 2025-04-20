@@ -88,6 +88,17 @@ func UsersRegist(c *gin.Context) {
 
 // 获取用户
 func GetUser(c *gin.Context) {
+	// 从上下文获取
+	currentUserModel := c.MustGet("current_user_model").(UserModel)
+	// 用户VO
+	userVO := UserVO{
+		Username: currentUserModel.Username,
+		Email:    currentUserModel.Email,
+		Bio:      currentUserModel.Bio,
+		Image:    currentUserModel.Image,
+		Token:    common.GenToken(currentUserModel.ID),
+	}
+	c.JSON(http.StatusOK, gin.H{"user": userVO})
 }
 
 // 用户修改
