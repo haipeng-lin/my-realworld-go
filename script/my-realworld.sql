@@ -1,98 +1,151 @@
--- CreateTable
-CREATE TABLE `User` (
-    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `email` TEXT NOT NULL,
-    `username` TEXT NOT NULL,
-    `password` TEXT NOT NULL,
-    `image` Varchar(200) DEFAULT 'https://api.realworld.io/images/smiley-cyrus.jpeg',
-    `bio` TEXT,
-    `demo` BOOLEAN NOT NULL DEFAULT false
-);
+/*
+ Navicat Premium Data Transfer
 
--- CreateTable
-CREATE TABLE `Article` (
-    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `slug` TEXT NOT NULL,
-    `title` TEXT NOT NULL,
-    `description` TEXT NOT NULL,
-    `body` TEXT NOT NULL,
-    `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `authorId` INT NOT NULL,
-    CONSTRAINT `Article_authorId_fkey` FOREIGN KEY (`authorId`) REFERENCES `User` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-);
+ Source Server         : MySQL80_win
+ Source Server Type    : MySQL
+ Source Server Version : 80035
+ Source Host           : localhost:3306
+ Source Schema         : my-realworld
 
--- CreateTable
-CREATE TABLE `Comment` (
-    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `body` TEXT NOT NULL,
-    `articleId` INT NOT NULL,
-    `authorId` INT NOT NULL,
-    CONSTRAINT `Comment_articleId_fkey` FOREIGN KEY (`articleId`) REFERENCES `Article` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `Comment_authorId_fkey` FOREIGN KEY (`authorId`) REFERENCES `User` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-);
+ Target Server Type    : MySQL
+ Target Server Version : 80035
+ File Encoding         : 65001
 
--- CreateTable
-CREATE TABLE `Tag` (
-    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `name` TEXT NOT NULL
-);
+ Date: 21/04/2025 23:50:30
+*/
 
--- CreateTable
-CREATE TABLE `_ArticleToTag` (
-    `A` INT NOT NULL,
-    `B` INT NOT NULL,
-    CONSTRAINT `_ArticleToTag_A_fkey` FOREIGN KEY (`A`) REFERENCES `Article` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `_ArticleToTag_B_fkey` FOREIGN KEY (`B`) REFERENCES `Tag` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-);
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
 
--- CreateTable
-CREATE TABLE `_UserFavorites` (
-    `A` INT NOT NULL,
-    `B` INT NOT NULL,
-    CONSTRAINT `_UserFavorites_A_fkey` FOREIGN KEY (`A`) REFERENCES `Article` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `_UserFavorites_B_fkey` FOREIGN KEY (`B`) REFERENCES `User` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-);
+-- ----------------------------
+-- Table structure for _articletotag
+-- ----------------------------
+DROP TABLE IF EXISTS `_articletotag`;
+CREATE TABLE `_articletotag`  (
+  `A` int(0) NOT NULL,
+  `B` int(0) NOT NULL,
+  INDEX `_ArticleToTag_A_fkey`(`A`) USING BTREE,
+  INDEX `_ArticleToTag_B_fkey`(`B`) USING BTREE,
+  CONSTRAINT `_ArticleToTag_A_fkey` FOREIGN KEY (`A`) REFERENCES `article` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `_ArticleToTag_B_fkey` FOREIGN KEY (`B`) REFERENCES `tag` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
--- CreateTable
-CREATE TABLE `_UserFollows` (
-    `A` INT NOT NULL,
-    `B` INT NOT NULL,
-    CONSTRAINT `_UserFollows_A_fkey` FOREIGN KEY (`A`) REFERENCES `User` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `_UserFollows_B_fkey` FOREIGN KEY (`B`) REFERENCES `User` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-);
+-- ----------------------------
+-- Records of _articletotag
+-- ----------------------------
 
--- CreateIndex
-CREATE UNIQUE INDEX `Article_slug_key` ON `Article`(`slug`);
+-- ----------------------------
+-- Table structure for _userfavorites
+-- ----------------------------
+DROP TABLE IF EXISTS `_userfavorites`;
+CREATE TABLE `_userfavorites`  (
+  `A` int(0) NOT NULL,
+  `B` int(0) NOT NULL,
+  INDEX `_UserFavorites_A_fkey`(`A`) USING BTREE,
+  INDEX `_UserFavorites_B_fkey`(`B`) USING BTREE,
+  CONSTRAINT `_UserFavorites_A_fkey` FOREIGN KEY (`A`) REFERENCES `article` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `_UserFavorites_B_fkey` FOREIGN KEY (`B`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
--- CreateIndex
-CREATE UNIQUE INDEX `Tag_name_key` ON `Tag`(`name`);
+-- ----------------------------
+-- Records of _userfavorites
+-- ----------------------------
 
--- CreateIndex
-CREATE UNIQUE INDEX `User_email_key` ON `User`(`email`);
+-- ----------------------------
+-- Table structure for _userfollows
+-- ----------------------------
+DROP TABLE IF EXISTS `_userfollows`;
+CREATE TABLE `_userfollows`  (
+  `A` int(0) NOT NULL,
+  `B` int(0) NOT NULL,
+  INDEX `_UserFollows_A_fkey`(`A`) USING BTREE,
+  INDEX `_UserFollows_B_fkey`(`B`) USING BTREE,
+  CONSTRAINT `_UserFollows_A_fkey` FOREIGN KEY (`A`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `_UserFollows_B_fkey` FOREIGN KEY (`B`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
--- CreateIndex
-CREATE UNIQUE INDEX `User_username_key` ON `User`(`username`);
+-- ----------------------------
+-- Records of _userfollows
+-- ----------------------------
 
--- CreateIndex
-CREATE UNIQUE INDEX `_ArticleToTag_AB_unique` ON `_ArticleToTag`(`A`, `B`);
+-- ----------------------------
+-- Table structure for article
+-- ----------------------------
+DROP TABLE IF EXISTS `article`;
+CREATE TABLE `article`  (
+  `id` int(0) NOT NULL AUTO_INCREMENT,
+  `slug` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `title` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `body` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `createdAt` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+  `updatedAt` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+  `authorId` int(0) NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `Article_authorId_fkey`(`authorId`) USING BTREE,
+  CONSTRAINT `Article_authorId_fkey` FOREIGN KEY (`authorId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
--- CreateIndex
-CREATE INDEX `_ArticleToTag_B_index` ON `_ArticleToTag`(`B`);
+-- ----------------------------
+-- Records of article
+-- ----------------------------
 
--- CreateIndex
-CREATE UNIQUE INDEX `_UserFavorites_AB_unique` ON `_UserFavorites`(`A`, `B`);
+-- ----------------------------
+-- Table structure for comment
+-- ----------------------------
+DROP TABLE IF EXISTS `comment`;
+CREATE TABLE `comment`  (
+  `id` int(0) NOT NULL AUTO_INCREMENT,
+  `createdAt` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+  `updatedAt` datetime(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+  `body` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `articleId` int(0) NOT NULL,
+  `authorId` int(0) NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `Comment_articleId_fkey`(`articleId`) USING BTREE,
+  INDEX `Comment_authorId_fkey`(`authorId`) USING BTREE,
+  CONSTRAINT `Comment_articleId_fkey` FOREIGN KEY (`articleId`) REFERENCES `article` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `Comment_authorId_fkey` FOREIGN KEY (`authorId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
--- CreateIndex
-CREATE INDEX `_UserFavorites_B_index` ON `_UserFavorites`(`B`);
+-- ----------------------------
+-- Records of comment
+-- ----------------------------
 
--- CreateIndex
-CREATE UNIQUE INDEX `_UserFollows_AB_unique` ON `_UserFollows`(`A`, `B`);
+-- ----------------------------
+-- Table structure for tag
+-- ----------------------------
+DROP TABLE IF EXISTS `tag`;
+CREATE TABLE `tag`  (
+  `id` int(0) NOT NULL AUTO_INCREMENT,
+  `name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
--- CreateIndex
-CREATE INDEX `_UserFollows_B_index` ON `_UserFollows`(`B`);
+-- ----------------------------
+-- Records of tag
+-- ----------------------------
 
+-- ----------------------------
+-- Table structure for user
+-- ----------------------------
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user`  (
+  `id` int(0) NOT NULL AUTO_INCREMENT,
+  `email` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `username` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `password` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `image` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT 'https://api.realworld.io/images/smiley-cyrus.jpeg',
+  `bio` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+  `demo` tinyint(1) NULL DEFAULT 0,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
-INSERT INTO `my-realworld`.`user`(`id`, `email`, `username`, `password`, `image`, `bio`, `demo`) VALUES (1, 'haipeng_lin@163.com', '林海鹏', '123', 'https://api.realworld.io/images/smiley-cyrus.jpeg', NULL, 0);
+-- ----------------------------
+-- Records of user
+-- ----------------------------
+INSERT INTO `user` VALUES (1, 'haipeng_lin@outlook.com', '林海鹏', '123456789', 'https://i.stack.imgur.com/xHWG8.jpg', 'I love cat', 1);
+INSERT INTO `user` VALUES (2, '306372404@qq.com', '鱼', '123456', 'https://api.realworld.io/images/smiley-cyrus.jpeg', NULL, 0);
+INSERT INTO `user` VALUES (3, '306372411@qq.com', '鱼123', '12345678', 'https://api.realworld.io/images/smiley-cyrus.jpeg', NULL, 0);
+
+SET FOREIGN_KEY_CHECKS = 1;
